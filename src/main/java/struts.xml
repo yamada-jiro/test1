@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+    <package name="test" namespace="/" extends="struts-default">
+        <interceptors>
+            <interceptor name="TestInterceptor" class="test.TestInterceptor" />
+        </interceptors>
+        <action name="test3" class="test.test3">
+            <!-- 例外発生時 先頭に定義しないと後続のInterceptorの例外をCatchできない-->
+            <interceptor-ref name="exception"/>
+            <interceptor-ref name="servletConfig"/>
+            <exception-mapping exception="java.lang.Exception" result="error"/>
+            <result name="error">/WEB-INF/error.jsp</result>
+            <!-- ログインチェック-->
+            <interceptor-ref name="TestInterceptor" />
+            <result name="success">/WEB-INF/hello.jsp</result>
+            <result name="login">/WEB-INF/login.jsp</result>
+            <result name="comment">/WEB-INF/comment.jsp</result>
+            <result name="list">/WEB-INF/list.jsp</result>
+            <result name="user">/WEB-INF/user.jsp</result>
+            <result name="init">/WEB-INF/init.jsp</result>
+        </action>
+    </package>
+</struts>
