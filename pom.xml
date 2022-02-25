@@ -43,4 +43,18 @@
 		</dependency>
 
 	</dependencies>
+
+	<!-- mvn tomcat7:run で起動するための設定 -->
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.tomcat.maven</groupId>
+				<artifactId>tomcat7-maven-plugin</artifactId>
+				<version>2.2</version>
+				<configuration>
+					<path>/test1</path>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 </project>
