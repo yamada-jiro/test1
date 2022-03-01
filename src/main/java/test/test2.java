@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
@@ -38,7 +39,7 @@ public class test2{
 	}
 
 //	static int insertImageCount=0;
-	static String insertImage(Connection con, File dir, Key keyOfPrivateKey) throws IOException, SQLException, ClassNotFoundException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException{
+	static String insertImage(Connection con, File dir, Key keyOfPrivateKey) throws IOException, SQLException, ClassNotFoundException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException, InterruptedException{
 		Vector<String> messages = new Vector<String>();
 		if(test.comment==null){
 			String message = "ERROR(1):commentがnull　"+dir.getPath();
@@ -79,8 +80,23 @@ public class test2{
 				continue;
 			}
 			String ext = splited[splited.length-1];
-			if(!ext.equals("JPG")&&!ext.equals("PNG")){
+			if(!ext.equals("JPG")&&!ext.equals("PNG")&&!ext.equals("HEIC")){
 				continue;
+			}
+			if(ext.equals("HEIC")) {
+				// heicをjpgに変換
+				String[] results = execCmd("magick \""+files[i].getAbsolutePath()+"\" \""+files[i].getAbsolutePath()+".jpg\"");
+				// 成功時はfiles[i]をheicからjpgに差し替え
+				if(new File(files[i].getAbsolutePath()+".jpg").exists()) {
+					files[i] = new File(files[i].getAbsolutePath()+".jpg");
+				}else {
+					//失敗時は処理終了
+					String message = "ERROR(1-4):HEICの変換に失敗 "+files[i].getAbsolutePath();
+					message += "<br>"+results[0];
+					message += "<br>"+results[1];
+					System.out.println(message);
+					return message;
+				}
 			}
 			FileInputStream in = new FileInputStream(files[i]);
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -93,6 +109,11 @@ public class test2{
 				out.write(b,0,n);
 			}
 			in.close();
+			// heicから変換したjpgは削除
+			if(ext.equals("HEIC")) {
+				files[i].delete();
+			}
+
 
 			if(commonKey==null){
 				String sql = "select common from test3 where id='test' and dir=?";
@@ -202,6 +223,39 @@ public class test2{
 	}
 	static String changeType(String type){
 		return "Type="+type;
+	}
+	static String[] execCmd(String cmd) throws IOException, InterruptedException {
+		Runtime r = Runtime.getRuntime();
+		Process p = r.exec(cmd);
+		StringBuffer sb1 = printInputStream(p.getInputStream());
+		StringBuffer sb2 = printInputStream(p.getErrorStream());
+		p.waitFor();
+		return new String[] {sb1.toString(), sb2.toString()};
+	}
+	static StringBuffer printInputStream(InputStream in) {
+		StringBuffer sb = new StringBuffer();
+		new Thread() {
+			public void run() {
+				byte[] b = new byte[8192];
+				try {
+					while(true) {
+						int n = in.read(b);
+						if(n==-1) {
+							break;
+						}
+						byte[] bb = new byte[n];
+						System.arraycopy(b, 0, bb, 0, n);
+						System.out.print(new String(bb));
+						sb.append(new String(bb));
+
+					}
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+
+			}
+		}.start();
+		return sb;
 	}
 
 
