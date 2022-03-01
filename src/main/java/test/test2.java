@@ -85,7 +85,7 @@ public class test2{
 			}
 			if(ext.equals("HEIC")) {
 				// heicをjpgに変換
-				String[] results = execCmd("magick \""+files[i].getAbsolutePath()+"\" \""+files[i].getAbsolutePath()+".jpg\"");
+				String[] results = execCmd("magick "+files[i].getAbsolutePath()+" "+files[i].getAbsolutePath()+".jpg");
 				// 成功時はfiles[i]をheicからjpgに差し替え
 				if(new File(files[i].getAbsolutePath()+".jpg").exists()) {
 					files[i] = new File(files[i].getAbsolutePath()+".jpg");
