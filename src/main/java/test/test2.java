@@ -1,6 +1,7 @@
 package test;
 
 import java.io.ByteArrayOutputStream;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -183,7 +184,8 @@ public class test2{
 				b = test.changeImageSize(b,Integer.MAX_VALUE,640,true,ext2);
 				b = test.encodeAES(b,test.getCommentKey());//comment
 				b = test.encodeAES(b,commonKey);//common
-				stmt.setBytes(3, b);
+				//stmt.setBytes(3, b);
+				stmt.setBinaryStream(3, new ByteArrayInputStream(b));
 				stmt.setInt(4, 640);
 				stmt.execute();
 //				try{
