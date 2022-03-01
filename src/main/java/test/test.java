@@ -603,7 +603,8 @@ public class test extends HttpServlet{
 
 	   static void createInitTableAndData(Connection con, String initPassword) throws SQLException, InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException, IOException{
 			final String[] sqls = {
-		"create table test(dir varchar(100), name varchar(100), data bytea, width int, type int, primary key(dir,name,width));",
+//		"create table test(dir varchar(100), name varchar(100), data bytea, width int, type int, primary key(dir,name,width));",// postgres
+		"create table test(dir varchar(100), name varchar(100), data BINARY LARGE OBJECT, width int, type int, primary key(dir,name,width));",
 		"create table test2(id varchar(100), password bytea, public bytea, private bytea, primary key(id));",
 		"create table test3(id varchar(100), dir varchar(100), description varchar(100), common bytea, primary key(id,dir));",
 		"create table test4(commenthash varchar(128), primary key(commenthash));",
