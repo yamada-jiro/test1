@@ -12,6 +12,7 @@ import java.awt.image.ImageProducer;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.UnsupportedEncodingException;
@@ -138,7 +139,8 @@ public class test extends HttpServlet{
 				if(!rs.next()){
 					response.setStatus(404);
 				}else{
-					b=rs.getBytes(1);
+//					b=rs.getBytes(1);
+					b=getBytes(rs.getBinaryStream(1));
 					int type = rs.getInt(2);
 					Key keyOfprivateKey=(Key)request.getSession().getAttribute("keyOfprivateKey");
 					Key privateKey=getPrivateKey(con,(String)request.getSession().getAttribute("userid"), keyOfprivateKey);
@@ -175,7 +177,8 @@ public class test extends HttpServlet{
 				response.setStatus(404);
 			}
 		}else{
-			b=rs.getBytes(1);
+//			b=rs.getBytes(1);
+			b=getBytes(rs.getBinaryStream(1));
 			Key keyOfprivateKey=(Key)request.getSession().getAttribute("keyOfprivateKey");
 			Key privateKey=getPrivateKey(con,(String)request.getSession().getAttribute("userid"), keyOfprivateKey);
 			Key commonKey=getCommonKey(
@@ -221,6 +224,19 @@ public class test extends HttpServlet{
 			}
 		}
 	}
+  }
+  public static byte[] getBytes(InputStream in) throws IOException {
+	  ByteArrayOutputStream out = new ByteArrayOutputStream();
+	  while(true) {
+		  byte[] b = new byte[8192];
+		  int n = in.read(b);
+		  if(n==-1) {
+			  in.close();
+			  break;
+		  }
+		  out.write(b, 0, n);
+	  }
+	  return out.toByteArray();
   }
 //  public static String getImageList(String dir) throws ClassNotFoundException, SQLException{
   public static String getImageList(String dir,String type) throws ClassNotFoundException, SQLException{
