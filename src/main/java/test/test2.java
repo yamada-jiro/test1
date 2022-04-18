@@ -81,7 +81,7 @@ public class test2{
 				continue;
 			}
 			String ext = splited[splited.length-1];
-			if(!ext.equals("JPG")&&!ext.equals("PNG")&&!ext.equals("HEIC")){
+			if(!ext.equals("JPG")&&!ext.equals("JPEG")&&!ext.equals("PNG")&&!ext.equals("HEIC")){
 				continue;
 			}
 			if(ext.equals("HEIC")) {
